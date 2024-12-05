@@ -1,0 +1,52 @@
+/* Global Styles */
+body {
+    font-family: 'Helvetica', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #ffffff; /* Light background color */
+    color: #000000; /* Dark text color for contrast */
+}
+
+h1 {
+    text-align: center;
+    color: #af2020; /* Colour for the main header */
+    margin-top: 22px;
+}
+
+/* Container for the plots */
+.plot-container {
+    margin: 20px auto;
+    padding: 20px;
+    max-width: 1200px; /* Set a max width for the plot containers */
+    /* border: 1px solid #ddd; /* Light border around the container */
+    /* border-radius: 10px; /* Rounded corners */
+    background-color: #ffffff; /* White background for the plot containers */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow for a floating effect */
+}
+
+/* Layout for multiple plots */
+.plot-container + .plot-container {
+    margin-top: 20px; /* Add space between consecutive plots */
+}
+
+/* Style for the graph */
+.dash-graph {
+    display: block;
+    margin: 0 auto;
+    height: 500px; /* Set a fixed height for consistency */
+    width: 95%; /* Ensure the graph takes up the full width of the container */
+}
+
+/* Interval component styling */
+.dash-interval {
+    display: none; /* Hide the interval component as it doesn't need a visible representation */
+}
+
+/* Style for the overall layout */
+div {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    padding: 10px;
+}

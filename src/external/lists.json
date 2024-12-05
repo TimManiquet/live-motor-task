@@ -1,0 +1,11 @@
+{
+    "kwargs": {
+        "smoothing_window": 20,
+        "trial_duration": 1200
+    },
+    "palette": {
+        "negative": "red",
+        "positive": "green",
+        "ambiguous": "orange"
+    }
+}
