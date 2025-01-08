@@ -10,6 +10,7 @@ created 4 November 2024
 from psychopy import visual, event, core
 import os, json, pyglet, random
 import numpy as np
+import platform # detecting whether on macOs
 
 # LOCAL IMPORTS
 from src.utils import *
@@ -97,6 +98,10 @@ win = visual.Window(
 
 # Extract the window size
 WIN_WIDTH, WIN_HEIGHT = win.size[0], win.size[1]
+# Scale down if on a macOS retina screen
+if platform.system() == 'Darwin':
+    WIN_HEIGHT /= 2
+    WIN_WIDTH /= 2
 
 # Calculate the boxes positions
 START_BOX_POS = (0, -WIN_HEIGHT / 2 + START_BOX_FROM_BOTTOM)
@@ -131,7 +136,8 @@ trial_data = []
 
 # Initiate a mouse object
 mouse = event.Mouse(visible=True, win=win)
-mouse.clickReset() # reset the status of the mouse
+# The next line is a trick to reset the pressing state of the button
+event.mouseButtons = [0, 0, 0]  # Reset button states
 
 # Initiate the reaction time clock
 rt_clock = core.Clock()  # Reaction time clock
