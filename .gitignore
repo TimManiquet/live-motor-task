@@ -5,3 +5,11 @@
 
 # Don't include the data
 data/*
+
+# Ignore the mock stimuli & script creating them
+scripts/mock_images.py
+mock_stimuli
+
+# Don't sync the temporary scripts
+scripts/dont_delete.py
+scripts/load_data.py

@@ -10,7 +10,10 @@ created 4 November 2024
 from psychopy import visual, event, core
 import os, json, pyglet, random
 import numpy as np
-import platform # detecting whether on macOs
+
+# ADD SOURCE TO THE PATH
+import sys
+sys.path.append(".")
 
 # LOCAL IMPORTS
 from src.utils import *
@@ -98,10 +101,16 @@ win = visual.Window(
 
 # Extract the window size
 WIN_WIDTH, WIN_HEIGHT = win.size[0], win.size[1]
-# Scale down if on a macOS retina screen
-if platform.system() == 'Darwin':
-    WIN_HEIGHT /= 2
-    WIN_WIDTH /= 2
+
+## To cope with retina displays: get the pyglet pixel ratio
+
+# Extract the underlying pyglet window
+pyglet_window = win.winHandle
+# Find the corresponding pixel ratio (higher in retina displays)
+pixel_ratio = pyglet_window.get_pixel_ratio()
+# Scale the window size accordingly
+WIN_WIDTH /= pixel_ratio
+WIN_HEIGHT /= pixel_ratio
 
 # Calculate the boxes positions
 START_BOX_POS = (0, -WIN_HEIGHT / 2 + START_BOX_FROM_BOTTOM)

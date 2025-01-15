@@ -8,6 +8,7 @@ created 2024-11-17
 import numpy as np
 import os, datetime
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 
 def get_current_datetime():
@@ -273,10 +274,8 @@ def calculate_pairwise_diff_matrices(avg_img_trajectories):
     for t in range(x_coords.shape[0]):
         # Extract x values at this time point for all images
         x_at_t = x_coords[t, :]  # Shape: (images,)
-        
         # Compute pairwise differences
-        diff_matrix = x_at_t[:, np.newaxis] - x_at_t[np.newaxis, :]  # Shape: (images, images)
-        
+        diff_matrix = np.abs(x_at_t[:, np.newaxis] - x_at_t[np.newaxis, :])  # Shape: (images, images)
         # Append the matrix to the list
         difference_matrices.append(diff_matrix)
     
@@ -316,3 +315,39 @@ def reorder_matrices_by_conditions(difference_matrices, image_names, conditions)
         reordered_matrices.append(reordered_matrix)
     
     return reordered_matrices, reordered_names
+
+def dim_reduc_matrices(matrices, time_points, algorithm, standardise = True):
+    
+    # Initiate an empty list to hold onto the results
+    dim_reduc_coordinates = []
+    
+    # Loop over time points and extract the results
+    for time_point in time_points:
+        # Extract the corresponding matrix
+        matrix = matrices[time_point]
+        # Check if there are empty data points in the matrix
+        if np.isnan(matrix).any():
+            dim_reduc_coordinates.append(np.nan)
+            continue
+        # Fit the dimensionality reduction to the matrix
+        coordinates = algorithm.fit_transform(matrix)
+        dim_reduc_coordinates.append(coordinates)
+        
+        # # If required, standardise the results
+        # if standardise:
+        #     std_coordinates = (coordinates - coordinates.mean())/(coordinates.std())
+        #     # Store the resulting coordinates after standardising
+        #     dim_reduc_coordinates.append(std_coordinates)
+        # else:
+        #     # Store the resulting coordinates without standardising
+        #     dim_reduc_coordinates.append(coordinates)
+    # If necessary, standardise the results
+    if standardise:
+        # Turn the list to an array
+        array = np.array(dim_reduc_coordinates)
+        # Standardise the array
+        array = (array - array.mean()/array.std())
+        # Turn it back into a list
+        dim_reduc_coordinates = list(array)
+    
+    return dim_reduc_coordinates

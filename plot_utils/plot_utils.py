@@ -7,6 +7,7 @@ created 2024-11-18
 
 # General imports
 import plotly.graph_objs as go
+import numpy as np
 from plotly.subplots import make_subplots
 import json
 
@@ -75,7 +76,7 @@ def plot_trajectory_last_trial(data, win_size, palette, show_boxes = True, **kwa
                 y0=rect[1],
                 x1=rect[2],
                 y1=rect[3],
-                line=dict(color="black", width=2),
+                line=dict(color="black", width=2), 
                 fillcolor="white",
                 opacity=0.5
             )
@@ -243,7 +244,7 @@ def plot_matrices(matrices, time_points):
     n_matrices = len(time_points)
     
     # Declare a title for each subplot
-    titles = [f"Time {t}" for t in time_points]
+    titles = [f"{t} ms" for t in time_points]
     
     # Create a subplot layout with 1 row and n_matrices columns
     fig = make_subplots(rows=1, cols=n_matrices, subplot_titles=titles)
@@ -276,6 +277,213 @@ def plot_matrices(matrices, time_points):
     # Update the aspect ratio of each heatmap to make it square
     fig.update_xaxes(scaleanchor="y", constrain="domain", showticklabels=False)  # Constrain the x-axis to match the y-axis scale
     fig.update_yaxes(scaleanchor="x", constrain="domain", showticklabels=False)  # Constrain the y-axis to match the x-axis scale
+    
+    # Update subplot titles if provided
+    if titles:
+        fig.update_annotations(font_size=12)
+    
+    return fig
+
+def custom_legend(palette):
+    # Define the rectangles and their properties
+    legend_items = [
+        {"color": col, "text": label}
+        for label, col in palette.items()
+    ]
+    
+    # Define some plotting parameters
+    n_labels = len(legend_items)
+    center = 0.5  # Center of the figure
+    spacing = 0.5  # Spacing between rectangles
+    total_height = (n_labels - 1) * spacing
+    start_y = center + total_height / 2
+    y_positions = [start_y - i * spacing for i in range(n_labels)]
+    
+    # Create a blank figure
+    fig = go.Figure()
+
+    # Add rectangles and text for the custom legend
+    for item, y_pos in zip(legend_items, y_positions):
+        # Add the rectangle
+        fig.add_shape(
+            type="rect",
+            x0=0.25, x1=0.65,  # Rectangle width (centered horizontally)
+            y0=y_pos - 0.15, y1=y_pos + 0.15,  # Rectangle height
+            fillcolor=item["color"],
+            line=dict(width=0),  # No border
+        )
+        
+        # Add the label text
+        fig.add_annotation(
+            x=0.7,  # Position of the text, to the right of the rectangle
+            y=y_pos,
+            text=item["text"],
+            showarrow=False,
+            xanchor="left",
+            yanchor="middle",
+            font=dict(size=24),
+        )
+
+    # Adjust layout
+    fig.update_layout(
+        width=400,  # Adjust width as needed
+        height=300,  # Adjust height as needed
+        margin=dict(l=10, r=10, t=10, b=10),  # Tight margins
+        xaxis=dict(visible=False),  # Hide x-axis
+        yaxis=dict(visible=False),  # Hide y-axis
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+    )
+
+    return fig
+
+def plot_dim_reduc(coordinates, time_points, labels, palette):
+    
+    # Check the data size
+    assert len(coordinates) == len(time_points), "Mismatch # of time points and coordinates."
+    assert len(coordinates[0]) == len(labels), "Mismatch # coordinates and labels."
+    
+    # Number of scatters to plot
+    n_scatters = len(time_points)
+    
+    # Declare a title for each subplot
+    titles = [f"{t} ms" for t in time_points]
+    
+    # Create a subplot layout with 1 row and n_matrices columns
+    fig = make_subplots(rows=1, cols=n_scatters, subplot_titles=titles)
+    
+    # Loop over pairs of coordinates
+    for i, coord in enumerate(coordinates):
+        # If the coordinates are empty, make a dot at [0, 0]
+        if isinstance(coord, np.ndarray) and not np.isnan(coord).any():
+            # Fetch the corresponding time point
+            time_point = time_points[i]
+            # Extract the conditions from the labels
+            conditions = [next((key for key in palette.keys() if key in label), None) for label in labels]
+            # Extract corresponding colours from the palette
+            colours = [palette[cond] for cond in conditions]
+            # Add scatter point
+            fig.add_trace(
+                go.Scatter(
+                    x=coord[:, 0],
+                    y=coord[:, 1],
+                    mode='markers',
+                    name=f'yes {time_point}',  # Label for each time moment
+                    marker=dict(
+                        size=8,
+                        color=colours,  # Color if palette is provided
+                        line=dict(width=1, color='DarkSlateGrey')  # Optional border
+                    )
+                ),
+                row=1,
+                col=i + 1
+            )
+    
+    # Update layout details
+    fig.update_layout(
+        title_text="Distance between stimuli",
+        title_x=0.5,  # Center the title
+        # xaxis_title="PCA Dimension 1",
+        # yaxis_title="PCA Dimension 2",
+        showlegend=False,
+        plot_bgcolor='white',
+        paper_bgcolor='white',
+        width=200 * len(time_points),
+        height=400,
+    )
+        
+    # Update the aspect ratio of each heatmap to make it square
+    fig.update_xaxes(scaleanchor="y",constrain="domain",showticklabels=False)  # Constrain the x-axis to match the y-axis scale
+    fig.update_yaxes(constrain="domain",showticklabels=False)  # Constrain the y-axis to match the x-axis scale
+    # fig.update_xaxes(scaleanchor="y", constrain="domain", showticklabels=False)  # Constrain the x-axis to match the y-axis scale
+    # fig.update_yaxes(scaleanchor="x", constrain="domain", showticklabels=False)  # Constrain the y-axis to match the x-axis scale
+    # Update the aspect ratio of each subplot to make them square
+    # for i in range(1, n_scatters + 1):
+    #     fig.update_xaxes(showticklabels=True, row=1, col=i)  # Constrain x-axis to match y-axis
+    #     fig.update_yaxes(showticklabels=True, row=1, col=i)  # Constrain y-axis to match x-axis
+
+    # fig.show()
+    
+    # Update subplot titles if provided
+    if titles:
+        fig.update_annotations(font_size=12)
+    
+    return fig
+
+
+
+def plot_matrices_and_dim_reduc(matrices, time_points, algorithm, labels, palette):
+    
+    # Number of matrices to plot
+    n_matrices = len(time_points)
+    
+    # Declare a title for each subplot
+    titles = [f"{t} ms" for t in time_points]
+    
+    # Create a subplot layout with 1 row and n_matrices columns
+    fig = make_subplots(rows=2, cols=n_matrices, subplot_titles=titles)
+    
+    for i, time_point in enumerate(time_points):
+        ## First: plot the matrix
+        # Extract the matrix at time point t
+        matrix = matrices[time_point]
+        # Add the matrix as a heatmap to the corresponding subplot
+        fig.add_trace(
+            go.Heatmap(
+                z=matrix,
+                colorscale="Greys",  # Choose a colorscale
+                colorbar=dict(title="Value") if i == n_matrices - 1 else None,  # Show colorbar only for the last plot
+                showscale=False,
+            ),
+            row=1,
+            col=i + 1
+        )
+        ## Second: plot the dimensionality reduction coordinates
+        # If there is only one line in the matrix or there are nan values in the matrix
+        if (np.isnan(matrix).any()) | matrix.shape[0] < 3:
+            # Return a single dot at the origin
+            coordinates = [0, 0]
+        else:
+            # Otherwise perform the dimensionality reduction
+            coordinates = algorithm.fit_transform(matrix)
+        # Extract the conditions from the labels
+        conditions = [next((key for key in palette.keys() if key in label), None) for label in labels]
+        # Extract corresponding colours from the palette
+        colours = [palette[cond] for cond in conditions]
+        # Add scatter point
+        fig.add_trace(
+            go.Scatter(
+                x=coordinates[:, 0],
+                y=coordinates[:, 1],
+                mode='markers',
+                name=f'{time_point}',  # Label for each time moment
+                marker=dict(
+                    size=8,
+                    color=colours,  # Color if palette is provided
+                    line=dict(width=1, color='DarkSlateGrey')  # Optional border
+                )
+            ),
+            row=2,
+            col=i + 1
+        )
+        
+    
+    # Update layout for spacing and titles
+    fig.update_layout(
+        height=550,  # Height of the overall figure
+        width=200 * n_matrices,  # Adjust width based on the number of matrices
+        title_text="Condition differences across time",
+        title_x=0.5,  # Center the title
+        plot_bgcolor='white',  # Set the background color of the plot area
+        paper_bgcolor='white',  # Set the background color outside the plot area
+        showlegend=False,
+    )
+    
+    # Update the aspect ratio of each heatmap to make it square
+    # fig.update_xaxes(scaleanchor="y", constrain="domain", showticklabels=False)  # Constrain the x-axis to match the y-axis scale
+    # fig.update_yaxes(scaleanchor="x", constrain="domain", showticklabels=False)  # Constrain the y-axis to match the x-axis scale
+    fig.update_xaxes(showticklabels=False)
+    fig.update_yaxes(showticklabels=False)
     
     # Update subplot titles if provided
     if titles:

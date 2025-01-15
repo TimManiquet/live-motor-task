@@ -8,15 +8,15 @@ body {
 }
 
 h1 {
-    text-align: center;
+    text-align: left;
     color: #af2020; /* Colour for the main header */
-    margin-top: 22px;
+    margin-top: 15px;
 }
 
 /* Container for the plots */
 .plot-container {
-    margin: 20px auto;
-    padding: 20px;
+    margin: 10px auto;
+    padding: 10px;
     max-width: 1200px; /* Set a max width for the plot containers */
     /* border: 1px solid #ddd; /* Light border around the container */
     /* border-radius: 10px; /* Rounded corners */
@@ -26,7 +26,7 @@ h1 {
 
 /* Layout for multiple plots */
 .plot-container + .plot-container {
-    margin-top: 20px; /* Add space between consecutive plots */
+    margin-top: 10px; /* Add space between consecutive plots */
 }
 
 /* Style for the graph */
