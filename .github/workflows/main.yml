@@ -24,7 +24,7 @@ jobs:
           auto-update-conda: true  # Ensures the latest Conda version
           python-version: 3.10.9      # Match the Python version in your environment.yml
           environment-file: environment.yml
-          activate-environment: my_env  # Replace with the name of your environment from environment.yml
+          activate-environment: live_mousetracker  # Replace with the name of your environment from environment.yml
 
       # Step 3: Validate dependencies
       - name: Validate environment installation
