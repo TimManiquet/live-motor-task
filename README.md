@@ -1,5 +1,6 @@
 # Live motor task
 
+TODO: add a nice illustration of how this would set up on two monitors
 ### What this is
 
 Two main parts: the Psychopy task and the Dash app.
