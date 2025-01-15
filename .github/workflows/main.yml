@@ -1,24 +1,36 @@
-name: CI
+name: Dependency and Code Testing
 
 on:
   push:
     branches:
-      - main
+      - main  # Run on pushes to the main branch
   pull_request:
+    branches:
+      - main  # Run on pull requests targeting the main branch
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  test-environment:
+    runs-on: ubuntu-latest  # You can also specify 'windows-latest' or 'macos-latest' for other platforms
+
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10.9'
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Run app tests
-      run: |
-        python -m unittest discover
+      # Step 1: Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Miniconda
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true  # Ensures the latest Conda version
+          python-version: 3.8      # Match the Python version in your environment.yml
+          environment-file: environment.yml
+          activate-environment: my_env  # Replace with the name of your environment from environment.yml
+
+      # Step 3: Validate dependencies
+      - name: Validate environment installation
+        run: conda list  # List all installed packages to confirm environment setup
+
+      # Step 4: Run code tests (customize based on your testing framework)
+      - name: Run tests
+        run: |
+          python -m unittest discover tests
