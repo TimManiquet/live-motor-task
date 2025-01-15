@@ -1,5 +1,11 @@
 # Live motor task
 
+### What this is
+
+### How to install
+
+### How to launch
+
 ### Repository tree
 
 (TODO: Fix the tree below)
@@ -34,3 +40,9 @@ live-motor-task
 ├── main.py              # Central entry point to launch both app and experiment
 └── README.md            # Project overview and instructions
 ```
+
+
+### Functionalities
+
+self copy-paste after launching
+
