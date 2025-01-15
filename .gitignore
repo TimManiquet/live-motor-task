@@ -6,8 +6,10 @@
 # Don't include the data
 data/*
 
-# Ignore the mock stimuli & script creating them
-scripts/mock_images.py
+# Ignore the temporary scripts
+scripts
+
+# Ignore the mock stimuli
 mock_stimuli
 
 # Don't sync the temporary scripts

@@ -2,9 +2,23 @@
 
 ### What this is
 
+Two main parts: the Psychopy task and the Dash app.
+
+The Psychopy task is a motor movement experiment. In it, the user is prompted to classify images as positive or negative. These images appear at the center of the screen when trials start, and are rated by clicking on buttons positioned at the top left and top right of the screen.
+
+The Dash app contains plotting tools to visualise the data created during the Psychopy task. It produces a series of graphs, and refreshes frequently to update the data showed on the graphs.
+
 ### How to install
 
+Clone this repository
+
+Navigate to the folder
+
+Install dependencies using `conda env create -f environment.yml`.
+
 ### How to launch
+
+To run the full project, run `main.py`. This will start both the Psychopy task and the Dash app. You will be prompted to choose a display on which to run the motor task, and the url address of the Dash app will be copied to your clipboard. Open that url on your local browser, and start the motor experiment to generate data to show on the app.
 
 ### Repository tree
 
@@ -46,3 +60,4 @@ live-motor-task
 
 self copy-paste after launching
 
+the task: re-launching, not skipping trials, escaping
