@@ -70,7 +70,7 @@ RESPONSE_1 = "positive"
 RESPONSE_2 = "negative"
 
 # Declare the output dire
-out_dir = './data'
+out_dir = 'data'
 
 # Give a name to the task & take a timestamp
 task_name = 'mockmousetracker'
