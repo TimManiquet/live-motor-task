@@ -71,6 +71,8 @@ RESPONSE_2 = "negative"
 
 # Declare the output dire
 out_dir = 'data'
+if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
 
 # Give a name to the task & take a timestamp
 task_name = 'mockmousetracker'
