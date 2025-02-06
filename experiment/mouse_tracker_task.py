@@ -66,8 +66,8 @@ RESPONSE_BOX_HEIGHT = boxes_kwargs['RESPONSE_BOX_HEIGHT']
 RESPONSE_BOX_WIDTH = boxes_kwargs['RESPONSE_BOX_WIDTH']
 
 # Define the possible responses
-RESPONSE_1 = "positive"
-RESPONSE_2 = "negative"
+RESPONSE_1 = "negative"
+RESPONSE_2 = "positive"
 
 # Declare the output dire
 out_dir = 'data'
@@ -75,7 +75,7 @@ if not os.path.exists(out_dir):
     os.mkdir(out_dir)
 
 # Give a name to the task & take a timestamp
-task_name = 'mockmousetracker'
+task_name = 'livemotortask'
 
 # Extract condition names from the palette
 conditions = list(palette.keys())
