@@ -16,22 +16,21 @@ boxes_kwargs_file = './src/external/boxes_kwargs.json'
 with open(boxes_kwargs_file, 'r') as file:
     boxes_kwargs = json.load(file)
 
-def plot_trajectory_last_trial(data, win_size, palette, show_boxes = True, **kwargs):
+def plot_trajectory_last_trial(last_trial, win_size, palette, show_boxes = True, **kwargs):
     """
     Plot the mouse trajectory of the last trial
 
     Args:
-        data (list): full data read from json format.
+        last_trial (dict): data from the last trial
     """
     # Declare a scaling factor to adjust the plot size
     scaling_factor = kwargs.get('scaling_factor', 0.6)
     
-    # find the last trial
-    last_trial = data[-1]
     # Extract the condition
-    condition = last_trial['condition']
+    # condition = last_trial['condition']
+    condition = next((key for key in palette.keys() if key in last_trial['stimulus']), None)
     # Extract the condition colour
-    colour = palette[condition]    
+    colour = palette[condition]
     
     # Define the plot based on x and y coordinates
     fig = go.Figure(data=go.Scatter(
@@ -336,6 +335,67 @@ def custom_legend(palette):
     )
 
     return fig
+
+
+def plot_time_correlation(correlation, time_range):
+    """
+    Plot a time-resolved correlation
+
+    Args:
+        correlation (np array): correlation across time (one data point per t)
+        time_range (int): time range over which the correlation elapses
+    """
+    # Find the position of the last non nan element to determines the axes
+    last_value_idx = np.where(~np.isnan(correlation))[0][-1]
+    
+    # Define the plot based on x and y coordinates
+    fig = go.Figure()
+    #     data=go.Scatter(
+    #         x=(0, time_range), 
+    #         y=correlation,
+    #         mode='lines',
+    #         line=dict(
+    #         color='dodgerBlue',
+    #         width=5.0
+    #         ),
+    #     )
+    # )
+    fig.add_trace(go.Scatter(
+            x=np.arange(time_range),
+            y=correlation,
+            mode='lines',
+            line=dict(
+                color='dodgerBlue',
+                width=5.0
+            ),
+            name='correlation'
+        ))
+
+    # Adjust the plot elements
+    fig.update_layout(
+        title = f"Correlation",
+        # xaxis_title = "X Coordinates",
+        yaxis_title = "Correlation",
+        xaxis = dict(
+            range=[0, last_value_idx],
+            # showgrid=False,  # Hide the grid
+            # zeroline=False,  # Hide the zero line
+            # visible=False    # Hide the axis entirely
+        ),
+        yaxis = dict(
+            # range=[-0.5, 0.5],
+            # showgrid=False,  # Hide the grid
+            # zeroline=False,  # Hide the zero line
+            # visible=False    # Hide the axis entirely
+        ),
+        # width = win_size[0] * scaling_factor,
+        # height = win_size[1] * scaling_factor,
+        plot_bgcolor='white',  # Set the background color of the plot area
+        paper_bgcolor='white',  # Set the background color outside the plot area
+    )
+    
+    return fig
+
 
 def plot_dim_reduc(coordinates, time_points, labels, palette):
     
