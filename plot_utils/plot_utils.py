@@ -24,7 +24,7 @@ def plot_trajectory_last_trial(last_trial, win_size, palette, show_boxes = True,
         last_trial (dict): data from the last trial
     """
     # Declare a scaling factor to adjust the plot size
-    scaling_factor = kwargs.get('scaling_factor', 0.6)
+    scaling_factor = kwargs.get('scaling_factor', 0.9)
     
     # Extract the condition
     # condition = last_trial['condition']
@@ -93,7 +93,7 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
                 - 'y_coord': A list of lists, where each inner list is the y-coordinates of a trajectory.
     """
     # Declare a scaling factor to adjust the size of the plot
-    scaling_factor = kwargs.get('scaling_factor', 0.6)
+    scaling_factor = kwargs.get('scaling_factor', 0.9)
     
     # Initiate a plotly figure
     fig = go.Figure()
@@ -113,7 +113,7 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
                 y1=rect[3],
                 line=dict(color="black", width=2.0),
                 fillcolor="white",
-                opacity=0.5
+                opacity=0.3
             )
 
     # Loop through each condition and plot all trajectories
@@ -145,7 +145,7 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
             y=trajectory['y_coord'],
             mode='lines',
             name=f'{condition} trajectory',
-            line=dict(color=palette[condition],width=2.0),
+            line=dict(color=palette[condition],width=5.0),
             opacity = 1.0,
             showlegend=False  # Set to False to avoid cluttering the legend
         ))

@@ -169,7 +169,7 @@ app.layout = html.Div([
                 value='all_data',
                 style={"width": "25%"}
             )
-        ], style={"width": "45%"}),  # Left dropdown takes 45% of the available width
+        ], style={"flex": "1"}),  # Left dropdown takes 45% of the available width
 
         # Second dropdown
         html.Div([
@@ -185,14 +185,26 @@ app.layout = html.Div([
                 value='people_valence',
                 style={"width": "25%"}
             )
-        ], style={"width": "50%"})  # Second dropdown takes the other half
-    ], style={"display": "flex", "justify-content": "space-between", "margin-bottom": "20px"}),
+        ], style={"flex": "1"})  # Second dropdown takes the other half
+    ], style={
+        "display": "flex",
+        "flex-wrap": "wrap",  # Allow wrapping on smaller screens
+        "justify-content": "space-between", 
+        "margin-bottom": "20px"
+    }),
 
     # Top two graphs: mouse trajectories
     html.Div([
         html.H2("Mouse trajectories"),
-        dcc.Graph(id='fast-graph-1'),
-        dcc.Graph(id='fast-graph-2'),
+        html.Div([
+            dcc.Graph(id='fast-graph-1', style={"flex": "1", "height": "700px"}),
+            dcc.Graph(id='fast-graph-2', style={"flex": "1", "height": "700px"})
+        ], style={
+            "display": "flex",
+            "gap": "20px",  # Space between the two graphs
+            "flex-wrap": "wrap",  # Allow wrapping on smaller screens
+            "margin-bottom": "20px"
+        }),
         dcc.Interval(
             id='fast-interval',
             interval=FAST_UPDATE_FREQUENCY,  # Update every 5 seconds
