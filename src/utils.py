@@ -47,6 +47,7 @@ def get_latest_file(list_of_files):
 
 def extend_fill_trial(trial, trial_duration = 2000):
     '''
+    This version works for dictionaries
     Take the data from one trial in a dictionary form, and return it with the
     mouse data extended and filled in.
     The trial duration is set very high to avoid errors in case the trajectory 
@@ -57,6 +58,14 @@ def extend_fill_trial(trial, trial_duration = 2000):
     y_extended = extend_array(trial['y_coord'], trial['mouse_times'], trial_duration)
     trial['y_coord'] = fill_in_array(y_extended)
     return trial
+
+# def extend_fill_trial_row(row, trial_duration=2000):
+#     '''
+#     Process a row of the DataFrame, extend and fill mouse data for x and y coordinates.
+#     '''
+#     row['x_coord'] = fill_in_array(extend_array(row['x_coord'], row['mouse_times'], trial_duration))
+#     row['y_coord'] = fill_in_array(extend_array(row['y_coord'], row['mouse_times'], trial_duration))
+#     return row
 
 
 def extend_array(input_array, indices, length):
@@ -165,8 +174,9 @@ def smooth_array(data, window_size):
 
 
 
-def unpack_cond_trajectories(unpacked_data, smoothing=True, **kwargs):
+def unpack_cond_trajectories(unpacked_data, palette, smoothing=True, **kwargs):
     """
+    This function works well for a  dictionary
     Processes unpacked mouse tracking data to extract and optionally smooth condition-specific trajectories.
 
     This function unpacks trial data, groups trajectories by condition, and computes 
@@ -203,12 +213,15 @@ def unpack_cond_trajectories(unpacked_data, smoothing=True, **kwargs):
         smoothing_window = 1
     
     # Find out all the unique conditions
-    conditions = np.unique([trial['condition'] for trial in unpacked_data])
+    # conditions = np.unique([trial['condition'] for trial in unpacked_data])
+    conditions = list(palette.keys())
     # Extract the trajectories for each condition
     condition_trajectories = {
         condition: {
-            'x_coord': [trial['x_coord'] for trial in unpacked_data if trial['condition']==condition],
-            'y_coord': [trial['y_coord'] for trial in unpacked_data if trial['condition']==condition]
+            'x_coord': [trial['x_coord'] for trial in unpacked_data if condition in trial['stimulus']],
+            'y_coord': [trial['y_coord'] for trial in unpacked_data if condition in trial['stimulus']]
+            # 'x_coord': [trial['x_coord'] for trial in unpacked_data if trial['condition']==condition],
+            # 'y_coord': [trial['y_coord'] for trial in unpacked_data if trial['condition']==condition]
         }
         for condition in conditions
     }
@@ -223,9 +236,59 @@ def unpack_cond_trajectories(unpacked_data, smoothing=True, **kwargs):
 
     return condition_trajectories, avg_condition_trajectories
 
+# def unpack_cond_trajectories(df, smoothing=True, **kwargs):
+#     """
+#     This function works well for a dataframe
+#     Processes mouse tracking data in a DataFrame to extract and optionally smooth condition-specific trajectories.
+
+#     Args:
+#         df (pd.DataFrame): A DataFrame containing trial data with columns:
+#             - 'x_coord' (list): The x-coordinates of the mouse trajectory.
+#             - 'y_coord' (list): The y-coordinates of the mouse trajectory.
+#             - 'condition' (str): The condition associated with the trial.
+#         smoothing (bool): If `True`, smooth the averaged trajectories using a smoothing window.
+#         **kwargs:
+#             smoothing_window (int): Size of the smoothing window for the trajectories. Defaults to 20.
+#             trial_duration (int): Length to which trials should be padded or truncated. Defaults to 1200.
+
+#     Returns:
+#         tuple: (condition_trajectories, avg_condition_trajectories)
+#             - `condition_trajectories` (dict): Trajectories grouped by condition.
+#             - `avg_condition_trajectories` (dict): Averaged and smoothed (if enabled) trajectories for each condition.
+#     """
+    
+#     # Extract the keyword arguments
+#     smoothing_window = kwargs.get('smoothing_window', 20)
+#     if not smoothing:
+#         smoothing_window = 1
+
+#     # Group the data by the 'condition' column
+#     condition_groups = df.groupby('condition')
+
+#     # Extract trajectories for each condition
+#     condition_trajectories = {
+#         condition: {
+#             'x_coord': list(group['x_coord']),
+#             'y_coord': list(group['y_coord'])
+#         }
+#         for condition, group in condition_groups
+#     }
+
+#     # Compute average trajectory for each condition
+#     avg_condition_trajectories = {
+#         condition: {
+#             'x_coord': smooth_array(np.nanmean(np.vstack(values['x_coord']), axis=0), smoothing_window),
+#             'y_coord': smooth_array(np.nanmean(np.vstack(values['y_coord']), axis=0), smoothing_window)
+#         }
+#         for condition, values in condition_trajectories.items()
+#     }
+
+#     return condition_trajectories, avg_condition_trajectories
+
 
 def unpack_img_trajectories(unpacked_data, smoothing=True, **kwargs):
     '''
+    This function works well for dictionaries.
     Takes in unpacked raw data and returns image-wise trajectories and
     image-wise average trajectories.
     '''
@@ -254,6 +317,54 @@ def unpack_img_trajectories(unpacked_data, smoothing=True, **kwargs):
     }
     
     return img_trajectories, avg_img_trajectories
+
+# def unpack_img_trajectories(df, smoothing=True, **kwargs):
+#     '''
+#     This function works well for a dataframe
+#     Takes in mouse tracking data in a DataFrame and returns image-wise trajectories 
+#     and image-wise average trajectories.
+
+#     Args:
+#         df (pd.DataFrame): A DataFrame with columns:
+#             - 'x_coord' (list): The x-coordinates of the mouse trajectory.
+#             - 'y_coord' (list): The y-coordinates of the mouse trajectory.
+#             - 'stimulus' (str): The image associated with the trial.
+#         smoothing (bool): If `True`, smooth the averaged trajectories using a smoothing window.
+#         **kwargs:
+#             smoothing_window (int): Size of the smoothing window for the trajectories. Defaults to 20.
+
+#     Returns:
+#         tuple: (img_trajectories, avg_img_trajectories)
+#             - `img_trajectories`: Trajectories grouped by image.
+#             - `avg_img_trajectories`: Averaged and smoothed (if enabled) trajectories for each image.
+#     '''
+#     # Extract the keyword arguments
+#     smoothing_window = kwargs.get('smoothing_window', 20)
+#     if not smoothing:
+#         smoothing_window = 1
+
+#     # Group the data by the 'stimulus' column
+#     img_groups = df.groupby('stimulus')
+
+#     # Aggregate all the trajectories per image
+#     img_trajectories = {
+#         img: {
+#             'x_coord': list(group['x_coord']),
+#             'y_coord': list(group['y_coord'])
+#         }
+#         for img, group in img_groups
+#     }
+
+#     # Compute average trajectory for each image
+#     avg_img_trajectories = {
+#         img: {
+#             'x_coord': smooth_array(np.nanmean(np.vstack(values['x_coord']), axis=0), smoothing_window),
+#             'y_coord': smooth_array(np.nanmean(np.vstack(values['y_coord']), axis=0), smoothing_window)
+#         }
+#         for img, values in img_trajectories.items()
+#     }
+
+#     return img_trajectories, avg_img_trajectories
 
 
 def calculate_pairwise_diff_matrices(avg_img_trajectories):
