@@ -16,3 +16,4 @@ list_data = json.load(open(list_file))
 # Extract the relevant lists from the data
 kwargs = list_data['kwargs']
 palette = list_data['palette']
+palettes = list_data['palettes']

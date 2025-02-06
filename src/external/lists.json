@@ -7,5 +7,30 @@
         "negative": "red",
         "positive": "green",
         "ambiguous": "orange"
+    },
+    "palettes": {
+        "people_valence": {
+            "positive": "green",
+            "ambiguous": "orange",
+            "negative": "red"
+        },
+        "interaction": {
+            "interaction": "red",
+            "nointeraction": "green"
+        },
+        "context": {
+            "beach": "#D52979",
+            "wedding": "#C393C0",
+            "birth": "#B92E85",
+            "fair": "#EA9EB2",
+            "war": "#3CA154",
+            "funeral": "#ADD08D",
+            "hospital": "#3E7EB8",
+            "poverty": "#87C5B8"
+        },
+        "congruency": {
+            "congruent": "orange",
+            "incongruent": "dodgerBlue"
+        }
     }
 }
