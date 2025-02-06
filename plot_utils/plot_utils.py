@@ -337,8 +337,69 @@ def custom_legend(palette):
     return fig
 
 
-def plot_time_correlation(correlation, time_range):
+# def plot_time_correlation(correlation, label):
+#     """
+#     This function works well for a single correlation trace
+#     Plot a time-resolved correlation
+
+#     Args:
+#         correlation (np array): correlation across time (one data point per t)
+#         time_range (int): time range over which the correlation elapses
+#     """
+#     # Find the position of the last non nan element to determines the axes
+#     last_value_idx = np.where(~np.isnan(correlation))[0][-1]
+    
+#     # Define the plot based on x and y coordinates
+#     fig = go.Figure()
+#     #     data=go.Scatter(
+#     #         x=(0, time_range), 
+#     #         y=correlation,
+#     #         mode='lines',
+#     #         line=dict(
+#     #         color='dodgerBlue',
+#     #         width=5.0
+#     #         ),
+#     #     )
+#     # )
+#     fig.add_trace(go.Scatter(
+#             x=np.arange(last_value_idx),
+#             y=correlation,
+#             mode='lines',
+#             line=dict(
+#                 color='dodgerBlue',
+#                 width=5.0
+#             ),
+#             name=label
+#         ))
+
+#     # Adjust the plot elements
+#     fig.update_layout(
+#         title = f'{label} valence',
+#         # xaxis_title = "X Coordinates",
+#         yaxis_title = "Correlation",
+#         xaxis = dict(
+#             range=[0, last_value_idx],
+#             # showgrid=False,  # Hide the grid
+#             # zeroline=False,  # Hide the zero line
+#             # visible=False    # Hide the axis entirely
+#         ),
+#         yaxis = dict(
+#             # range=[-0.5, 0.5],
+#             # showgrid=False,  # Hide the grid
+#             # zeroline=False,  # Hide the zero line
+#             # visible=False    # Hide the axis entirely
+#         ),
+#         # width = win_size[0] * scaling_factor,
+#         # height = win_size[1] * scaling_factor,
+#         plot_bgcolor='white',  # Set the background color of the plot area
+#         paper_bgcolor='white',  # Set the background color outside the plot area
+#     )
+    
+#     return fig
+
+def plot_time_correlation(correlations, label, palette):
     """
+    This function works well for several correlations marked by condition
     Plot a time-resolved correlation
 
     Args:
@@ -346,34 +407,27 @@ def plot_time_correlation(correlation, time_range):
         time_range (int): time range over which the correlation elapses
     """
     # Find the position of the last non nan element to determines the axes
-    last_value_idx = np.where(~np.isnan(correlation))[0][-1]
+    last_value_idx = max([np.where(~np.isnan(correlations[p]))[0][-1] for p in palette.keys()])
     
     # Define the plot based on x and y coordinates
     fig = go.Figure()
-    #     data=go.Scatter(
-    #         x=(0, time_range), 
-    #         y=correlation,
-    #         mode='lines',
-    #         line=dict(
-    #         color='dodgerBlue',
-    #         width=5.0
-    #         ),
-    #     )
-    # )
-    fig.add_trace(go.Scatter(
-            x=np.arange(time_range),
-            y=correlation,
-            mode='lines',
-            line=dict(
-                color='dodgerBlue',
-                width=5.0
-            ),
-            name='correlation'
-        ))
+    
+    # Go condition by condition and add a trace for each correlation
+    for cond in palette.keys():    
+        fig.add_trace(go.Scatter(
+                x=np.arange(last_value_idx),
+                y=correlations[cond],
+                mode='lines',
+                line=dict(
+                    color=palette[cond],
+                    width=5.0
+                ),
+                name=cond
+            ))
 
     # Adjust the plot elements
     fig.update_layout(
-        title = f"Correlation",
+        title = f'{label} valence',
         # xaxis_title = "X Coordinates",
         yaxis_title = "Correlation",
         xaxis = dict(

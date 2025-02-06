@@ -12,13 +12,11 @@ import dash
 import warnings
 from dash import dcc, html
 from dash.dependencies import Input, Output
-import plotly.graph_objs as go
 import pandas as pd
 import os, glob
 import json
-# from sklearn.manifold import TSNE, MDS
-# from sklearn.decomposition import PCA
-import warnings # to ignore warnings
+import warnings # to ignore warnings$
+import base64 # to encode images and display them
 
 #########
 import sys
@@ -36,14 +34,10 @@ from plot_utils.plot_utils import *
 FAST_UPDATE_FREQUENCY = 2000 # in ms
 SLOW_UPDATE_FREQUENCY = 10000 # in ms
 APP_TITLE = "Live mouse tracker results"
-# N_FIGURES = 4 # how many plots are showing
 
 # Directories
 DATA_DIR = 'data'
 DATAFILE_EXT = '.json'
-
-# Declare the time points to show matrices at
-time_points = [300, 400, 500, 600, 700, 800]
 
 # Global cache to store data and track processed lines in each file
 cached_data = []
@@ -62,6 +56,50 @@ valences = ['people', 'scene', 'image']
 
 # Calculate the number of graphs that makes
 n_corr_plots = len(targets) * len(valences)
+
+# Make a table to show image ratings
+images = ratings['filename']
+
+# Function to determine cell color based on rating
+def get_color(value):
+    """Returns a linear color from dodgerblue (lowest) to white (highest) for values between -1 and 8."""
+    # Normalize the value to a range of 0 to 1
+    norm_value = (value + 1) / 9  # Scale value to be between 0 and 1
+    norm_value = max(0, min(1, norm_value))  # Clamp the value within [0, 1]
+
+    # Calculate the RGB components for a linear gradient from dodgerblue to white
+    r = int(30 + (255 - 30) * norm_value)   # Red goes from 30 to 255
+    g = int(144 + (255 - 144) * norm_value) # Green goes from 144 to 255
+    b = int(255 + (255 - 255) * norm_value) # Blue stays at 255 (full blue)
+
+    return f"rgb({r}, {g}, {b})"
+
+
+# Build the table rows
+table_rows = []
+# for img, rating in zip(images, ratings):
+for _, row in ratings.iterrows():
+    # Extract the image filename
+    # img = os.path.join('assets', 'stimuli', row['filename'])
+    filename = os.path.join('stimuli', row['filename'])
+    encoded_image = base64.b64encode(open(filename, 'rb').read())
+
+    # Construct the row
+    table_row = html.Tr([
+        # Image cell
+        html.Td(html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), style={"width": "140px", "height": "100px"})),
+        # Rating cells
+        *[
+            html.Td(
+                f"{row[f'{valence}-valence-{target}']:.2f}",
+                style={"background-color": get_color(row[f'{valence}-valence-{target}']), "text-align": "center"}
+            ) 
+            for valence in valences
+            for target in targets
+        ]
+    ])
+    table_rows.append(table_row)
+
 
 ## DATA HANDLING FUNCTIONS
 
@@ -162,18 +200,6 @@ app.layout = html.Div([
         )
     ], style={'margin-bottom': '50px'}),
 
-    # # Bottom graphs
-    # html.Div([
-    #     html.H2("Correlations"),
-    #     dcc.Graph(id='slow-graph-1'),
-    #     dcc.Graph(id='slow-graph-2'),
-    #     dcc.Interval(
-    #         id='slow-interval',
-    #         interval=SLOW_UPDATE_FREQUENCY,  # Update every 60 seconds
-    #         n_intervals=0
-    #     )
-    # ]),
-    
     # Tabs for the slow graphs
     dcc.Tabs(id='tabs-container', children=[
         dcc.Tab(label=f"{targets[i]}", children=[
@@ -191,28 +217,30 @@ app.layout = html.Div([
         id='slow-interval',
         interval=SLOW_UPDATE_FREQUENCY,
         n_intervals=0
-    )
-    # # Grid layout for the plots
-    # html.Div([
-    #     # Plots 1-4
-    #     html.Div(dcc.Graph(id=f'live-update-plot-{i}'), className="plot-container") for i in range(1, N_FIGURES)
-    # ] + [
-    #     # Legend plot
-    #     html.Div(dcc.Graph(id='legend'), className="plot-container")
-    # ], style={
-    #     'display': 'grid',
-    #     'gridTemplateColumns': 'repeat(2, 1fr)',  # Three columns
-    #     'gridGap': '20px',
-    #     'maxWidth': '1600px',
-    #     'margin': '0 auto'
-    # }),
+    ),
 
-    # # Interval for live updates
-    # dcc.Interval(
-    #     id='interval-component',
-    #     interval=UPDATE_FREQUENCY,
-    #     n_intervals=0
-    # )
+    # Leave some space here
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    html.Br(),
+    
+    # Ratings table
+    html.H2("Image Ratings Table"),
+    html.Table(
+        # Table header
+        [html.Tr([
+            html.Th("Image"),
+            *[html.Th(f"{target} {valence}")
+              for target in targets
+              for valence in valences]
+            # html.Th("Source 1"), html.Th("Source 2"), html.Th("Source 3"), html.Th("Source 4")
+        ])] + table_rows,  # Combine header and rows
+        style={"width": "100%", "border-collapse": "collapse", "border": "1px solid black"}
+    )
 ])
 
 # Callback to update the top two (fast) graphs
@@ -222,7 +250,7 @@ app.layout = html.Div([
     [Output('fast-graph-1', 'figure'), Output('fast-graph-2', 'figure')],
     [Input('fast-interval', 'n_intervals'),
      Input('data-option', 'value'),
-     Input('palette-option', 'value'),]
+     Input('palette-option', 'value')]
 )
 def update_fast_graphs(n, data_option, palette_option):
     
@@ -233,7 +261,7 @@ def update_fast_graphs(n, data_option, palette_option):
     win_size = (1200, 800)
     # Extract the palette based on the user's choice
     palette = palettes[palette_option]
-        
+    
     # If we should only plot the last participant
     if data_option ==  'last_participant':
         # List all the files
@@ -279,7 +307,7 @@ def update_fast_graphs(n, data_option, palette_option):
     [Output(f'slow-graph-{i}', 'figure') for i in range(1, n_corr_plots+1)],
     [Input('slow-interval', 'n_intervals'),
      Input('data-option', 'value'),
-     Input('palette-option', 'value'),]
+     Input('palette-option', 'value')]
 )
 def update_slow_graphs(n, data_option, palette_option):
     
@@ -288,21 +316,6 @@ def update_slow_graphs(n, data_option, palette_option):
     
     # Extract the palette based on the user's choice
     palette = palettes[palette_option]
-        
-    # If we should only plot the last participant
-    if data_option ==  'last_participant':
-        # List all the files
-        data_files = glob.glob(os.path.join(DATA_DIR, f'*{DATAFILE_EXT}'))
-        # Fetch the last one
-        last_file = get_latest_file(data_files)
-        # Check how many lines to take from it
-        n_lines = file_line_tracker[last_file]
-        # Upate the data accordinly
-        # cached_data = cached_data[-n_lines:]
-        # Extract the condition-wise trajectories
-        condition_trajectories, average_trajectories = unpack_cond_trajectories(cached_data[-n_lines:], palette)
-    elif data_option == 'all_data':
-        condition_trajectories, average_trajectories = unpack_cond_trajectories(cached_data, palette)
     
     # Extract the image-wise trajectories
     _, avg_img_trajectories = unpack_img_trajectories(cached_data)
@@ -316,6 +329,10 @@ def update_slow_graphs(n, data_option, palette_option):
     
     # Fetch the images we have so far
     images = list(avg_img_trajectories.keys())
+    
+    # Fetch the indices of images in each condition based on the palette
+    palette_idx = {condition: [i for i, img in enumerate(images) if condition in img]
+                  for condition in palette.keys()}
     
     # Extract the time range from a random image
     # time_range = len(avg_img_trajectories[images[0]]['x_coord'])
@@ -331,7 +348,12 @@ def update_slow_graphs(n, data_option, palette_option):
 
     # Initialize correlations with nan arrays (for vectorized assignment)
     time_range = x_coords.shape[1]
-    correlations = {c: np.full(time_range, np.nan) for c in correlations.keys()}
+    # correlations = {c: {p: np.full(time_range, np.nan)}
+    correlations = {
+        c: {p: np.full(time_range, np.nan)
+            for p in palette.keys()}
+        for c in correlations.keys()
+    }
 
     # Go over each time point in the time range
     for t in range(time_range):
@@ -339,26 +361,24 @@ def update_slow_graphs(n, data_option, palette_option):
 
         if not np.any(np.isnan(x_at_t)):  # Check for nan values only once
             for c, target in ratings_dict.items():
-                correlations[c][t] = np.corrcoef(x_at_t, target)[0, 1]  # Compute correlation
+                for p in palette.keys(): # loop over the conditions from the palette
+                    # find the indices corresponding to the conditions
+                    indices = palette_idx[p]
+                    correlations[c][p][t] = np.corrcoef(x_at_t[indices], target[indices])[0, 1]  # Compute correlation
     
     # Make a plot from the correlations for each valence type and correlation target
-    figs = [plot_time_correlation(correlations[target], time_range) for target in correlations.keys()]
-    # fig1.show()
-    # fig2 = plot_time_correlation(correlations[target2], time_range)
-
+    figs = []
+    for valence in valences:
+        figs.append(plot_time_correlation(correlations[f'{valence}-valence-gpt'], valence, palette))
+    for valence in valences:
+        figs.append(plot_time_correlation(correlations[f'{valence}-valence-low'], valence, palette))
+    for valence in valences:
+        figs.append(plot_time_correlation(correlations[f'{valence}-valence-mid'], valence, palette))
+    for valence in valences:
+        figs.append(plot_time_correlation(correlations[f'{valence}-valence-high'], valence, palette))
+    
     return figs
 
-# for img in avg_img_trajectories:
-#     print(
-#         img,
-#         np.nanmean(avg_img_trajectories[img]['x_coord'])
-#     )
-#     trace = np.nanmean(avg_img_trajectories[img]['x_coord'])
-#     plt.plot(trace)
-#     plt.show()
-
-# plt.plot(correlations[c])
-# plt.show()
 
 if __name__ == '__main__':
     # Define host and port

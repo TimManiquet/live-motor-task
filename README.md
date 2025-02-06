@@ -9,6 +9,13 @@ The Psychopy task is a motor movement experiment. In it, the user is prompted to
 
 The Dash app contains plotting tools to visualise the data created during the Psychopy task. It produces a series of graphs, and refreshes frequently to update the data showed on the graphs.
 
+#### The task
+
+Its parameters, timings, goals
+It never ends
+Images are randomised
+It can be restarted
+
 ### How to install
 
 Clone this repository
