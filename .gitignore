@@ -12,6 +12,17 @@ scripts
 # Ignore the mock stimuli
 mock_stimuli
 
+# Ignore the back up stimulus folder with wrong names
+stimuli_backup
+
 # Don't sync the temporary scripts
 scripts/dont_delete.py
 scripts/load_data.py
+
+# All the temporary working files
+temp
+app/backup_app.py
+app/failed_app.py
+
+# Ignore the backup made from the utils
+src/backup_utils.py
