@@ -210,7 +210,7 @@ app.layout = html.Div([
             dcc.Graph(id='fast-graph-2', style={"flex": "1", "height": "700px"})
         ], style={
             "display": "flex",
-            "gap": "20px",  # Space between the two graphs
+            "gap": "10px",  # Space between the two graphs
             "flex-wrap": "wrap",  # Allow wrapping on smaller screens
             "margin-bottom": "20px"
         }),
@@ -247,19 +247,6 @@ app.layout = html.Div([
             html.Div([
                 # Title of the correlation tab
                 html.H4(f"correlating with: {expanded_target_names[i]}"),
-                # # Message for the drop-down selection
-                # html.Div("Choose images to correlate:", style={"font-size": "18px", "margin-left": "8px"}),
-                # # Selection module to choose images to correlate
-                # dbc.Select(
-                #     id='congruency-option',
-                #     options=[
-                #         {'label': 'Congruent images', 'value': 'congruent'},
-                #         {'label': 'Incongruent images', 'value': 'incongruent'},
-                #         {'label': 'All images', 'value': 'all'}
-                #     ],
-                #     value='all',
-                #     style={"width": "40%"}
-                # ),
                 # Correlation graph itself
                 dcc.Graph(id=f'middle-graph-{i}')
             ], style={'margin-bottom': '20px'})
@@ -373,7 +360,7 @@ def update_middle_graphs(n, congruency_option):
     }
     
     # Fetch the images based on the congruency option
-    print(congruency_option)
+
     if congruency_option == 'all':
         # take all images
         images = list(avg_img_trajectories.keys())

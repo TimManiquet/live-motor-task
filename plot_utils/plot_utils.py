@@ -57,10 +57,11 @@ def plot_trajectory_last_trial(last_trial, win_size, palette, show_boxes = True,
             zeroline=False,  # Hide the zero line
             visible=False    # Hide the axis entirely
         ),
-        width = win_size[0] * scaling_factor,
+        width = win_size[0] * (scaling_factor * 1.2), # make the width larger proportionatly
         height = win_size[1] * scaling_factor,
         plot_bgcolor='white',  # Set the background color of the plot area
         paper_bgcolor='white',  # Set the background color outside the plot area
+        font=dict(size=20), # make the legend font size a bit larger
     )
     
     # If required, plot the mouse tracking visual elements
@@ -141,8 +142,8 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
         y_coords = trajectory['y_coord']
 
         fig.add_trace(go.Scatter(
-            x=trajectory['x_coord'],
-            y=trajectory['y_coord'],
+            x=trajectory['x_coord'][:800],
+            y=trajectory['y_coord'][:800],
             mode='lines',
             name=f'{condition} trajectory',
             line=dict(color=palette[condition],width=5.0),
@@ -169,10 +170,11 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
             zeroline=False,  # Hide the zero line
             visible=False    # Hide the axis entirely
         ),
-        width = win_size[0] * scaling_factor,
+        width = win_size[0] * (scaling_factor * 1.2), # make the width larger proportionatly
         height = win_size[1] * scaling_factor,
         plot_bgcolor='white',  # Set the background color of the plot area
         paper_bgcolor='white',  # Set the background color outside the plot area
+        font=dict(size=20), # make the legend font size a bit larger
     )
 
     # Add condition names to the legend by adding invisible traces (1 per condition)
@@ -426,12 +428,12 @@ def plot_time_correlations(correlations, label, palette):
                     color=palette[cond],
                     width=5.0
                 ),
-                name=cond
+                name=cond.replace('_', ' ')
             ))
 
     # Adjust the plot elements
     fig.update_layout(
-        title = f'{label}',
+        title = f'{label}'.replace('_', ' '),
         xaxis_title = "Time",
         yaxis_title = "Correlation",
         xaxis = dict(
@@ -450,6 +452,7 @@ def plot_time_correlations(correlations, label, palette):
         # height = win_size[1] * scaling_factor,
         plot_bgcolor='white',  # Set the background color of the plot area
         paper_bgcolor='white',  # Set the background color outside the plot area
+        font=dict(size=20), # make the legend font size a bit larger
     )
     
     return fig
@@ -508,6 +511,7 @@ def plot_dim_reduc(coordinates, time_points, labels, palette):
         paper_bgcolor='white',
         width=200 * len(time_points),
         height=400,
+        font=dict(size=20),
     )
         
     # Update the aspect ratio of each heatmap to make it square

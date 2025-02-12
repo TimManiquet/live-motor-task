@@ -5,6 +5,7 @@ body {
     padding: 0;
     background-color: #ffffff; /* Light background color */
     color: #000000; /* Dark text color for contrast */
+    font-size: 20px;
 }
 
 h1 {
