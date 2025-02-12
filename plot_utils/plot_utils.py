@@ -397,7 +397,7 @@ def custom_legend(palette):
     
 #     return fig
 
-def plot_time_correlation(correlations, label, palette):
+def plot_time_correlations(correlations, label, palette):
     """
     This function works well for several correlations marked by condition
     Plot a time-resolved correlation
@@ -427,8 +427,8 @@ def plot_time_correlation(correlations, label, palette):
 
     # Adjust the plot elements
     fig.update_layout(
-        title = f'{label} valence',
-        # xaxis_title = "X Coordinates",
+        title = f'{label}',
+        xaxis_title = "Time",
         yaxis_title = "Correlation",
         xaxis = dict(
             range=[0, last_value_idx],
