@@ -407,7 +407,11 @@ def plot_time_correlations(correlations, label, palette):
         time_range (int): time range over which the correlation elapses
     """
     # Find the position of the last non nan element to determines the axes
-    last_value_idx = max([np.where(~np.isnan(correlations[p]))[0][-1] for p in palette.keys()])
+    try:
+        last_value_idx = max([np.where(~np.isnan(correlations[p]))[0][-1] for p in palette.keys()])
+    # Debug purposes: if no value can be found in one of the arrays
+    except IndexError:
+        last_value_idx = 900
     
     # Define the plot based on x and y coordinates
     fig = go.Figure()
