@@ -17,3 +17,5 @@ list_data = json.load(open(list_file))
 kwargs = list_data['kwargs']
 palette = list_data['palette']
 palettes = list_data['palettes']
+target_colours = list_data['target_colours']
+ratings_palette = list_data['ratings_palette']

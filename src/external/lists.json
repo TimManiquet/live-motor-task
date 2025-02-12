@@ -31,6 +31,25 @@
         "congruency": {
             "congruent": "orange",
             "incongruent": "dodgerBlue"
+        },
+        "congruency_and_people": {
+            "negative_congruent": "red",
+            "negative_incongruent": "salmon",
+            "positive_congruent": "green",
+            "positive_incongruent": "palegreen",
+            "ambiguous_congruent": "bisque",
+            "ambiguous_incongruent": "khaki"
         }
+    },
+    "target_colours": {
+        "gpt": [30, 144, 255],
+        "low": [255, 224, 81],
+        "mid": [255, 160, 100],
+        "high": [255, 144, 30]
+    },
+    "ratings_palette": {
+        "image_valence": "green",
+        "people_valence": "salmon",
+        "scene_valence": "dodgerBlue"
     }
 }

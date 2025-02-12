@@ -18,6 +18,7 @@ stimuli_backup
 # Don't sync the temporary scripts
 scripts/dont_delete.py
 scripts/load_data.py
+scripts/renaming_images.py
 
 # All the temporary working files
 temp
@@ -26,3 +27,9 @@ app/failed_app.py
 
 # Ignore the backup made from the utils
 src/backup_utils.py
+
+# Back up version of the ratings file
+src/external/ratings_backup.tsv
+
+# Backup of the data (while renaming filenames)
+data_backup
