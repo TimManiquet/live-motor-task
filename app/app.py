@@ -220,6 +220,25 @@ app.layout = html.Div([
             n_intervals=0
         )
     ], style={'margin-bottom': '50px'}),
+    
+    # Dropdowns for selecting data, aligned horizontally
+    html.Div([
+        # Title of the correlation tabs below
+        html.H3(f"Correlations mouse positions"),
+        # Message for the drop-down selection
+        html.Div("Choose images to correlate:", style={"font-size": "18px", "margin-left": "8px"}),
+        # selection of the images to correlate
+        dbc.Select(
+            id='congruency-option',
+            options=[
+                {'label': 'Congruent images', 'value': 'congruent'},
+                {'label': 'Incongruent images', 'value': 'incongruent'},
+                {'label': 'All images', 'value': 'all'}
+            ],
+            value='all',
+            style={"width": "25%"}
+            )
+    ]),
 
     # Tabs for the middle correlation graphs
     dcc.Tabs(id='tabs-container', children=[
@@ -227,20 +246,20 @@ app.layout = html.Div([
             # One div per target
             html.Div([
                 # Title of the correlation tab
-                html.H3(f"Correlations with {expanded_target_names[i]}"),
-                # Message for the drop-down selection
-                html.Div("Choose images to correlate:", style={"font-size": "18px", "margin-left": "8px"}),
-                # Selection module to choose images to correlate
-                dbc.Select(
-                    id='congruency-option',
-                    options=[
-                        {'label': 'Congruent images', 'value': 'congruent'},
-                        {'label': 'Incongruent images', 'value': 'incongruent'},
-                        {'label': 'All images', 'value': 'all'}
-                    ],
-                    value='all',
-                    style={"width": "40%"}
-                ),
+                html.H4(f"correlating with: {expanded_target_names[i]}"),
+                # # Message for the drop-down selection
+                # html.Div("Choose images to correlate:", style={"font-size": "18px", "margin-left": "8px"}),
+                # # Selection module to choose images to correlate
+                # dbc.Select(
+                #     id='congruency-option',
+                #     options=[
+                #         {'label': 'Congruent images', 'value': 'congruent'},
+                #         {'label': 'Incongruent images', 'value': 'incongruent'},
+                #         {'label': 'All images', 'value': 'all'}
+                #     ],
+                #     value='all',
+                #     style={"width": "40%"}
+                # ),
                 # Correlation graph itself
                 dcc.Graph(id=f'middle-graph-{i}')
             ], style={'margin-bottom': '20px'})
@@ -275,7 +294,7 @@ app.layout = html.Div([
     html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(), html.Br(),
     
     # Very bottom: the slow, detailed graphs
-    html.H2("Detailled correlations"),
+    html.H2("Detailed correlations"),
     dcc.Tabs(id='tabs-container', children=[
         dcc.Tab(label=f"{targets[i]}", children=[
             html.Div([
@@ -354,12 +373,13 @@ def update_middle_graphs(n, congruency_option):
     }
     
     # Fetch the images based on the congruency option
+    print(congruency_option)
     if congruency_option == 'all':
         # take all images
         images = list(avg_img_trajectories.keys())
     elif congruency_option == 'congruent':
         # take only congruent images
-        images = [img for img in list(avg_img_trajectories.keys()) if 'congruent' in img]
+        images = [img for img in list(avg_img_trajectories.keys()) if (('congruent' in img) & (not 'incongruent' in img))]
     elif congruency_option == 'incongruent':
         # take only incongruent images
         images = [img for img in list(avg_img_trajectories.keys()) if 'incongruent' in img]
@@ -406,7 +426,7 @@ def update_middle_graphs(n, congruency_option):
     
     return figs
 
-### WORKING ZONE HERE
+
 # Callback for the middle graphs correlation graphs
 @app.callback(
     [Output(f'slow-graph-{i}', 'figure') for i in range(1, n_corr_plots+1)],
@@ -467,10 +487,14 @@ def update_slow_graphs(n, data_option, palette_option):
                     # find the indices corresponding to the conditions
                     indices = palette_idx[p]
                     correlations[c][p][t] = np.corrcoef(x_at_t[indices], target[indices])[0, 1]  # Compute correlation
-    
+    # import matplotlib.pyplot as plt
+    # for c in correlations.keys():
+    #     for p in correlations[c].keys():
+    #         plt.plot(np.array(correlations[c][p]))
+    #         plt.show()
     # Make a plot from the correlations for each valence type and correlation target
     figs = []
-    for valence in valences:
+    for valence in valences:        
         figs.append(plot_time_correlations(correlations[f'{valence}-valence-gpt'], f'{valence} valence', palette))
     for valence in valences:
         figs.append(plot_time_correlations(correlations[f'{valence}-valence-low'], f'{valence} valence', palette))
