@@ -132,7 +132,7 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
                     color=palette[condition],
                     width=1.0
                     ),
-                opacity = 0.5,
+                opacity = 0.3,
                 showlegend=False  # Set to False to avoid cluttering the legend
             ))
     
@@ -146,7 +146,7 @@ def plot_cond_trajectories(condition_trajectories, average_trajectories, win_siz
             y=trajectory['y_coord'][:800],
             mode='lines',
             name=f'{condition} trajectory',
-            line=dict(color=palette[condition],width=5.0),
+            line=dict(color=palette[condition],width=10.0),
             opacity = 1.0,
             showlegend=False  # Set to False to avoid cluttering the legend
         ))
