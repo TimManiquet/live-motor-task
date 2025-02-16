@@ -98,7 +98,7 @@ win = visual.Window(
     units='pix',  # Use pixels as the unit,
     size = (WIN_WIDTH, WIN_HEIGHT),
     color = BACKGROUND_COLOUR,
-    allowGUI = None
+    allowGUI = False
 )
 
 # Extract the window size
