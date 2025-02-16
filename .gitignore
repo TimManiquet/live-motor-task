@@ -6,6 +6,9 @@
 # Don't include the data
 data/*
 
+# Don't include the backup data (mostly created during the event)
+backup_data
+
 # Ignore the temporary scripts
 scripts
 
