@@ -204,7 +204,7 @@ app.layout = html.Div([
 
     # Top two graphs: mouse trajectories
     html.Div([
-        html.H2("Mouse trajectories"),
+        # html.H2("Mouse trajectories"),
         html.Div([
             dcc.Graph(id='fast-graph-1', style={"flex": "1", "height": "700px"}),
             dcc.Graph(id='fast-graph-2', style={"flex": "1", "height": "700px"})
