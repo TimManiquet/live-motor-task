@@ -19,9 +19,7 @@ mock_stimuli
 stimuli_backup
 
 # Don't sync the temporary scripts
-scripts/dont_delete.py
-scripts/load_data.py
-scripts/renaming_images.py
+scripts
 
 # All the temporary working files
 temp
@@ -36,3 +34,10 @@ src/external/ratings_backup.tsv
 
 # Backup of the data (while renaming filenames)
 data_backup
+
+# Ignore the mac-related requirements, which are probably not correct
+mac_requirements.txt
+mac_environment.yml
+
+# Ignore the conda-made requirements, assuming the pip-made are enough
+environment.yml
