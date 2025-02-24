@@ -33,8 +33,6 @@ To run the full project, run `main.py`. This will start both the Psychopy task a
 
 ### Repository tree
 
-(TODO: Fix the tree below)
-
 ```
 live-motor-task
 ├── app                  # All app-related files (Dash app)
