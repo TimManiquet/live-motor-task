@@ -41,3 +41,6 @@ mac_environment.yml
 
 # Ignore the conda-made requirements, assuming the pip-made are enough
 environment.yml
+
+# Ignore affinity photo files for illustrations
+*.afphoto*
