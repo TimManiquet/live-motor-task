@@ -43,6 +43,7 @@ live-motor-task
 │   └── app.py           # Main app file
 ├── data                 # All experiment data
 │   ├── 2024-12-23-1627_task-livemotortask.json
+│   ├── some example data files here
 │   ├── (yyyy-mm-dd-hhmm_task-taskname).json
 │   └── ...
 ├── experiment           # PsychoPy experiment
