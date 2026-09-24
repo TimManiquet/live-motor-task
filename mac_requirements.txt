@@ -285,7 +285,7 @@ transforms3d==0.4.2
 typing_extensions==4.12.2
 tzdata==2024.2
 tzlocal==5.2
-ujson==5.10.0
+ujson==5.13.0
 umap-learn @ file:///Users/runner/miniforge3/conda-bld/umap-learn_1730221949906/work
 unicodedata2 @ file:///private/var/folders/k1/30mswbxs7r1g6zwn8y4fyt500000gp/T/abs_a3epjto7gs/croot/unicodedata2_1713212955584/work
 urllib3 @ file:///private/var/folders/nz/j6p8yfhx1mv_0grj5xl4650h0000gp/T/abs_11wy4ndttf/croot/urllib3_1700840488804/work
